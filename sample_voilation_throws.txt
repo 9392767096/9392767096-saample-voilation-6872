@@ -1,0 +1,40 @@
+#include <iostream>
+#include <cstring>
+#include <cstdlib>
+
+class Vehicle {
+public:
+    int* speed;  // Raw pointer member (not recommended)
+    
+    Vehicle() {
+        speed = (int*) malloc(sizeof(int));  // Using malloc in C++
+        // No check if malloc succeeded
+        *speed = 0;  // Dereferencing without check
+    }
+    
+    void setSpeed(const char* inputSpeed) {
+        char buffer[5];
+        strcpy(buffer, inputSpeed);  // Unsafe string copy, no bounds check
+        *speed = atoi(buffer);  // Using atoi without error checking
+    }
+    
+    void printSpeed() {
+        std::cout << "Speed is: " << *speed << std::endl;
+    }
+    
+    ~Vehicle() {
+        free(speed);  // Freeing malloced memory manually
+        speed = nullptr; // No double free protection, but good to null
+    }
+};
+
+int main() {
+    Vehicle v;
+    char input[100];  // Large buffer, but no input length check
+    std::cin >> input;  // Unsafe input, no bounds check
+    
+    v.setSpeed(input);
+    v.printSpeed();
+
+    return 0;
+}
